@@ -1,26 +1,37 @@
 package br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order;
 
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class ServiceOrder {
 
     private long id;
+    private Customer customer;
     private String description;
+    private OrderStatus status;
+    private Payment payment;
+    private BigDecimal price;
     private LocalDate issueDate;
     private LocalDate endDate;
-    private BigDecimal price;
+
     private String observation;
+
+
 
     public ServiceOrder(){}
 
-    public ServiceOrder(long id, String description, LocalDate issueDate, LocalDate endDate, BigDecimal price, String observation) {
+    public ServiceOrder(long id, String description, LocalDate issueDate, LocalDate endDate, BigDecimal price, String observation, OrderStatus status, Payment payment, Customer customer) {
         this.id = id;
         this.description = description;
         this.issueDate = issueDate;
         this.endDate = endDate;
         this.price = price;
         this.observation = observation;
+        this.status = status;
+        this.payment = payment;
+        this.customer = customer;
     }
 
     public long getId() {
@@ -69,5 +80,29 @@ public class ServiceOrder {
 
     public void setObservation(String observation) {
         this.observation = observation;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }
