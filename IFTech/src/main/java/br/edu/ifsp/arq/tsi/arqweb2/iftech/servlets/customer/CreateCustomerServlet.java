@@ -1,6 +1,6 @@
 package br.edu.ifsp.arq.tsi.arqweb2.iftech.servlets.customer;
 
-import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.customer.Customer;
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao.CustomerDao;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.*;
 

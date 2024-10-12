@@ -1,6 +1,6 @@
 package br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao;
 
-import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.customer.Customer;
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
