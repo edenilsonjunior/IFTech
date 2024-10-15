@@ -1,10 +1,10 @@
 package br.edu.ifsp.arq.tsi.arqweb2.iftech.servlets.customer;
 
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Address;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao.CustomerDao;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.*;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -29,28 +29,46 @@ public class CreateCustomerServlet extends HttpServlet {
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         String name = request.getParameter("name");
+        String cpf = request.getParameter("cpf");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
-        String cpf = request.getParameter("cpf").replaceAll("[.-]", "");
+        String password = request.getParameter("password");
 
         var customer = new Customer();
         customer.setName(name);
         customer.setEmail(email);
         customer.setPhone(phone);
         customer.setCpf(cpf);
+        customer.setPassword(password);
 
-        RequestDispatcher dispatcher = null;
+        String street = request.getParameter("street");
+        String number = request.getParameter("number");
+        String complement = request.getParameter("complement");
+        String district = request.getParameter("district");
+        String zipCode = request.getParameter("zipCode");
+        String city = request.getParameter("city");
+        String state = request.getParameter("state");
+
+        var address = new Address();
+        address.setStreet(street);
+        address.setNumber(number);
+        address.setComplement(complement);
+        address.setDistrict(district);
+        address.setZipCode(zipCode);
+        address.setCity(city);
+        address.setState(state);
+
+        customer.setAddress(address);
+
         var customerDao = new CustomerDao(DataSourceSearcher.getInstance().getDataSource());
 
         if(customerDao.create(customer)) {
-            dispatcher = request.getRequestDispatcher("/index.jsp");
+           request.getRequestDispatcher("/index.jsp").forward(request, response);;
         }else {
             request.setAttribute("result", "notRegistered");
-            dispatcher = request.getRequestDispatcher("/customer-register.jsp");
+            request.getRequestDispatcher("/customer-register.jsp").forward(request, response);;
         }
-
-        dispatcher.forward(request, response);
-
     }
 }
