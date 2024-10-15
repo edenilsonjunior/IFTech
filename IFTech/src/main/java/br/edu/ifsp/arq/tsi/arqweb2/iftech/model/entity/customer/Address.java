@@ -2,6 +2,7 @@ package br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer;
 
 public class Address {
 
+    private long id;
     private String street;
     private String number;
     private String complement;
@@ -10,17 +11,15 @@ public class Address {
     private String city;
     private String state;
 
-    public Address() {
+    public Address() { }
+
+
+    public long getId() {
+        return id;
     }
 
-    public Address(String street, String number, String complement, String district, String zipCode, String city, String state) {
-        this.street = street;
-        this.number = number;
-        this.complement = complement;
-        this.district = district;
-        this.zipCode = zipCode;
-        this.city = city;
-        this.state = state;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getStreet() {

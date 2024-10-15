@@ -11,28 +11,16 @@ public class ServiceOrder {
     private Customer customer;
     private String description;
     private OrderStatus status;
-    private Payment payment;
+    private PaymentMethod payment;
     private BigDecimal price;
     private LocalDate issueDate;
     private LocalDate endDate;
-
     private String observation;
-
-
+    private PaymentMethod paymentMethod;
+    private OrderStatus orderStatus;
 
     public ServiceOrder(){}
 
-    public ServiceOrder(long id, String description, LocalDate issueDate, LocalDate endDate, BigDecimal price, String observation, OrderStatus status, Payment payment, Customer customer) {
-        this.id = id;
-        this.description = description;
-        this.issueDate = issueDate;
-        this.endDate = endDate;
-        this.price = price;
-        this.observation = observation;
-        this.status = status;
-        this.payment = payment;
-        this.customer = customer;
-    }
 
     public long getId() {
         return id;
@@ -42,12 +30,44 @@ public class ServiceOrder {
         this.id = id;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public PaymentMethod getPayment() {
+        return payment;
+    }
+
+    public void setPayment(PaymentMethod payment) {
+        this.payment = payment;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public LocalDate getIssueDate() {
@@ -66,14 +86,6 @@ public class ServiceOrder {
         this.endDate = endDate;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
     public String getObservation() {
         return observation;
     }
@@ -82,27 +94,19 @@ public class ServiceOrder {
         this.observation = observation;
     }
 
-    public OrderStatus getStatus() {
-        return status;
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
     }
 
-    public void setStatus(OrderStatus status) {
-        this.status = status;
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
-    public Payment getPayment() {
-        return payment;
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
     }
 
-    public void setPayment(Payment payment) {
-        this.payment = payment;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }
