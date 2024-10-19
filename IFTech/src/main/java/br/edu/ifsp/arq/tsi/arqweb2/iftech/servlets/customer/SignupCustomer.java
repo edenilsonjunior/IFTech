@@ -14,11 +14,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
-@WebServlet("/createCustomer")
-public class CreateCustomerServlet extends HttpServlet {
+@WebServlet("/signup")
+public class SignupCustomer extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    public CreateCustomerServlet() {
+    public SignupCustomer() {
         super();
     }
 
@@ -34,14 +34,7 @@ public class CreateCustomerServlet extends HttpServlet {
         String cpf = request.getParameter("cpf");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
-        String password = request.getParameter("password");
-
-        var customer = new Customer();
-        customer.setName(name);
-        customer.setEmail(email);
-        customer.setPhone(phone);
-        customer.setCpf(cpf);
-        customer.setPassword(password);
+        String password = PasswordEncoder.encode(request.getParameter("password"));
 
         String street = request.getParameter("street");
         String number = request.getParameter("number");
@@ -50,6 +43,13 @@ public class CreateCustomerServlet extends HttpServlet {
         String zipCode = request.getParameter("zipCode");
         String city = request.getParameter("city");
         String state = request.getParameter("state");
+
+        var customer = new Customer();
+        customer.setName(name);
+        customer.setEmail(email);
+        customer.setPhone(phone);
+        customer.setCpf(cpf);
+        customer.setPassword(password);
 
         var address = new Address();
         address.setStreet(street);
@@ -65,10 +65,10 @@ public class CreateCustomerServlet extends HttpServlet {
         var customerDao = new CustomerDao(DataSourceSearcher.getInstance().getDataSource());
 
         if(customerDao.create(customer)) {
-           request.getRequestDispatcher("/index.jsp").forward(request, response);;
+            response.sendRedirect("customer-login.jsp");
         }else {
             request.setAttribute("result", "notRegistered");
-            request.getRequestDispatcher("/customer-register.jsp").forward(request, response);;
+            request.getRequestDispatcher("customer-signup.jsp").forward(request, response);;
         }
     }
 }

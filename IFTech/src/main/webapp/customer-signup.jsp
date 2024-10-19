@@ -25,7 +25,7 @@
       </div>
     </c:if>
 
-    <form action="createCustomer" method="post" id="form1">
+    <form action="signup" method="post" id="form1">
       <h1 class="text-center">Cadastre-se</h1>
 
       <div class="mb-2">
@@ -36,6 +36,7 @@
         <span id="0"></span>
       </div>
 
+      <!--Customer fields-->
       <div class="mb-2">
         <label for="cpf">CPF*</label>
         <input type="text" name="cpf" id="cpf" class="form-control" required="required">
@@ -53,6 +54,64 @@
         <label for="phone">Telefone*</label>
         <input type="text" name="phone"
                id="phone" class="form-control" required="required"> <span
+              id="3"></span>
+      </div>
+
+      <div class="mb-2">
+        <label for="password">Senha*</label>
+        <input type="password" name="password"
+               id="password" class="form-control" required="required"> <span
+              id="3"></span>
+      </div>
+
+
+      <!--Address fields-->
+      <div class="mb-2">
+        <label for="street">Rua*</label>
+        <input type="text" name="street"
+               id="street" class="form-control" required="required"> <span
+              id="3"></span>
+      </div>
+
+      <div class="mb-2">
+        <label for="number">Numero*</label>
+        <input type="text" name="number"
+               id="number" class="form-control" required="required"> <span
+              id="3"></span>
+      </div>
+
+      <div class="mb-2">
+        <label for="complement">Complemento*</label>
+        <input type="text" name="complement"
+               id="complement" class="form-control" required="required"> <span
+              id="3"></span>
+      </div>
+
+      <div class="mb-2">
+        <label for="district">Bairro*</label>
+        <input type="text" name="district"
+               id="district" class="form-control" required="required"> <span
+              id="3"></span>
+      </div>
+
+      <div class="mb-2">
+        <label for="zipCode">CEP*</label>
+        <input type="text" name="zipCode"
+               id="zipCode" class="form-control" required="required"> <span
+              id="3"></span>
+      </div>
+
+      <div class="mb-2">
+        <label for="city">Cidade*</label>
+        <input type="text" name="city"
+               id="city" class="form-control" required="required"> <span
+              id="3"></span>
+      </div>
+
+      <div class="mb-2">
+        <label for="state">Estado*</label>
+        <input type="text" name="state"
+               id="state" class="form-control" required="required"> <span
               id="3"></span>
       </div>
 

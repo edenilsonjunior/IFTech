@@ -1,6 +1,7 @@
 package br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer;
 
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order.ServiceOrder;
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.PasswordEncoder;
 
 import java.util.List;
 
@@ -18,6 +19,10 @@ public class Customer {
 
     public Customer(){}
 
+    public boolean checkPassword(String password){
+        var encoded = PasswordEncoder.encode(password);
+        return this.password.equals(password);
+    }
 
     public Long getId() {
         return id;
