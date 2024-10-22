@@ -11,12 +11,11 @@ public class ServiceOrder {
     private Customer customer;
     private String description;
     private OrderStatus status;
-    private PaymentMethod payment;
+    private PaymentMethod paymentMethod;
     private BigDecimal price;
     private LocalDate issueDate;
     private LocalDate endDate;
     private String observation;
-    private PaymentMethod paymentMethod;
     private OrderStatus orderStatus;
 
     public ServiceOrder(){}
@@ -52,14 +51,6 @@ public class ServiceOrder {
 
     public void setStatus(OrderStatus status) {
         this.status = status;
-    }
-
-    public PaymentMethod getPayment() {
-        return payment;
-    }
-
-    public void setPayment(PaymentMethod payment) {
-        this.payment = payment;
     }
 
     public BigDecimal getPrice() {
