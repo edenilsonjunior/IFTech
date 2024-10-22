@@ -21,6 +21,14 @@ public class LoginCustomer extends HttpServlet {
     }
 
     @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        String url = "views/customer/login.html";
+        response.sendRedirect(url);
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         var customerDao = new CustomerDao(DataSourceSearcher.getInstance().getDataSource());
