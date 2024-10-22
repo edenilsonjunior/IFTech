@@ -21,7 +21,7 @@ public class Customer {
 
     public boolean checkPassword(String password){
         var encoded = PasswordEncoder.encode(password);
-        return this.password.equals(password);
+        return this.password.equals(encoded);
     }
 
     public Long getId() {

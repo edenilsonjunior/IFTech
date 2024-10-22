@@ -1,11 +1,10 @@
+import {submitGet} from '../components/global.js';
+
 document.addEventListener('DOMContentLoaded', async () => {
 
-    const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 2));
     const tableBody = document.querySelector("#order-list tbody");
 
-    try {
-        const response = await fetch(contextPath + "/retrieveOrders");
-        var data = await response.json();
+        var data = await submitGet("/retrieveOrders");
 
         if(data.orders.length === 0) {
             const noDataRow = document.createElement('tr');
@@ -31,7 +30,4 @@ document.addEventListener('DOMContentLoaded', async () => {
             tableBody.appendChild(row);
         });
 
-    } catch (error) {
-        console.error(error);
-    }
 });

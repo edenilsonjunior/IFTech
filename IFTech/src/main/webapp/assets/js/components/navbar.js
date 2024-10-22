@@ -25,7 +25,7 @@ const loadNavbarLinks = () =>{
             <a class="nav-link active" aria-current="page" href="${contextPath}/index.html">Página Inicial</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="${contextPath}/service-order-list.html">Ordens de serviço</a>
+            <a class="nav-link" href="${contextPath}/views/order/service-order-list.html">Ordens de serviço</a>
         </li>
     `;
 }
@@ -46,7 +46,7 @@ const loadAuthLinks = (loggedIn)  =>{
                     <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" alt="user" width="30px">
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="${contextPath}/views/user/profile.html">Perfil</a></li>
+                    <li><a class="dropdown-item" href="${contextPath}/views/customer/profile.html">Perfil</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="${contextPath}/logout">Sair</a></li>
                 </ul>

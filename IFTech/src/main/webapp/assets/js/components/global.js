@@ -23,8 +23,8 @@ export const checkUserPermission = async () => {
 
     let response = await checkLoginStatus();
 
-    if(!response.isLogged){
-        window.location.href = `${contextPath}/401.html`;
+    if(!response.loggedIn){
+        window.location.href = `${contextPath}/views/erros/401.html`;
     }
 
 }
