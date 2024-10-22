@@ -1,6 +1,5 @@
 package br.edu.ifsp.arq.tsi.arqweb2.iftech.servlets.customer;
 
-import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao.CustomerDao;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.*;
 
@@ -11,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.Optional;
 
 
 @WebServlet("/login")

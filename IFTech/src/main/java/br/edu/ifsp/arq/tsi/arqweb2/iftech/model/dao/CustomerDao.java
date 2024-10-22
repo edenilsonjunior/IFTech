@@ -2,8 +2,6 @@ package br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao;
 
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Address;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
-import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.PasswordEncoder;
-import org.eclipse.tags.shaded.org.apache.xpath.operations.Bool;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;

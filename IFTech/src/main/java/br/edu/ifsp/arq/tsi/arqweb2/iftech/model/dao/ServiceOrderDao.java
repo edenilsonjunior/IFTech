@@ -1,11 +1,9 @@
 package br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao;
 
-import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Address;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order.OrderStatus;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order.PaymentMethod;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order.ServiceOrder;
-import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.DataSourceSearcher;
 
 import javax.sql.DataSource;
 import java.sql.Date;
