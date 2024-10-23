@@ -1,7 +1,7 @@
 import {submitPost, submitGet} from '../components/global.js';
 
 const formId = 'createOrderForm';
-const servletUrl = '/createOrder';
+const servletUrl = '/api/order/create';
 const formContainer = document.getElementById(formId);
 
 formContainer.addEventListener('submit', async (event)=>{

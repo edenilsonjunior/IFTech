@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
-@WebServlet("/signup")
+@WebServlet("/api/customer/signup")
 @MultipartConfig
 public class SignupCustomer extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -26,15 +26,7 @@ public class SignupCustomer extends HttpServlet {
         super();
     }
 
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String url = "views/customer/signup.html";
-        response.sendRedirect(url);
-    }
-
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -42,11 +34,11 @@ public class SignupCustomer extends HttpServlet {
         try {
             var customerDao = new CustomerDao(DataSourceSearcher.getInstance().getDataSource());
             customerDao.create(createCustomer(request));
-            response.sendRedirect("views/customer/login.html");
+            response.sendRedirect(request.getContextPath() +"/views/customer/login.html");
 
         } catch (CustomHttpException e) {
             response.setStatus(e.getStatusCode());
-            Utils.writeJsonErrorResponse(response, e.getMessage());
+            Utils.writeJsonResponse(response, "error", e.getMessage());
         }
     }
 

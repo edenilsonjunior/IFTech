@@ -12,7 +12,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @WebFilter(
-        urlPatterns = {"", ""},
+        urlPatterns =
+                {
+                    "/api/customer/logout",
+                    "/api/customer/update",
+                    "/views/customer/profile.html",
+                    "/api/order/create",
+                    "/api/order/delete",
+                    "/api/order/retrieve",
+                    "/api/order/update",
+                    "/views/order/service-order-register.html",
+                    "/views/order/service-order-edit.html",
+                    "/views/order/service-order-list.html"
+                },
         filterName = "Authorization")
 public class ValidationFilter implements Filter {
 
@@ -24,7 +36,7 @@ public class ValidationFilter implements Filter {
         var session = httpRequest.getSession(false);
         if(session == null || session.getAttribute("customer") == null) {
             var httpResponse = (HttpServletResponse)response;
-            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login.jsp");
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/views/customer/login.html");
         }
         else {
             chain.doFilter(request, response);

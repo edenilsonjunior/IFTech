@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 
-@WebServlet("/checkLogin")
+@WebServlet("/api/customer/check-login")
 public class CheckLogin extends HttpServlet {
     private static final long serialVersionUID = 1L;
 

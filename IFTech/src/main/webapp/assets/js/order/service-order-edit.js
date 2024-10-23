@@ -1,13 +1,13 @@
 import { submitGet, submitPost } from '../components/global.js';
 
 const formId = 'editOrderForm';
-const servletUrl = '/updateOrder';
+const servletUrl = '/api/customer/update';
 const formContainer = document.getElementById(formId);
 
 document.addEventListener('DOMContentLoaded', async () => {
 
     const orderId = new URLSearchParams(window.location.search).get('id');
-    var data = await submitGet(`/updateOrder?id=${orderId}`);
+    var data = await submitGet(`/api/order/update?id=${orderId}`);
 
     loadOrder(data);
 });

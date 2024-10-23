@@ -11,7 +11,7 @@ export const loadData = async () => {
 
 export const checkLoginStatus = async () => {
     try {
-        const response = await fetch(`${contextPath}/checkLogin`);
+        const response = await fetch(`${contextPath}/api/customer/check-login`);
         return await response.json();
     } catch (error) {
         console.error(error);

@@ -35,8 +35,8 @@ const loadAuthLinks = (loggedIn)  =>{
     if (!loggedIn) {
         authLinks.innerHTML = `
             <li class="nav-item">
-                <a href="${contextPath}/signup" class="btn btn-outline-secondary" role="button">SignUp</a>
-                <a href="${contextPath}/login" class="btn btn-secondary" role="button">Login</a>
+                <a href="${contextPath}/views/customer/signup.html" class="btn btn-outline-secondary" role="button">SignUp</a>
+                <a href="${contextPath}/views/customer/login.html" class="btn btn-secondary" role="button">Login</a>
             </li>
         `;
     } else {
@@ -48,7 +48,7 @@ const loadAuthLinks = (loggedIn)  =>{
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="${contextPath}/views/customer/profile.html">Perfil</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="${contextPath}/logout">Sair</a></li>
+                    <li><a class="dropdown-item" href="${contextPath}/api/customer/logout">Sair</a></li>
                 </ul>
             </li>
         `;

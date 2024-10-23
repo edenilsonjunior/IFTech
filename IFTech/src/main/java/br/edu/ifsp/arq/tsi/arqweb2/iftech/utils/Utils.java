@@ -35,11 +35,12 @@ public class Utils {
         response.getWriter().print(GSON.toJson(content));
     }
 
-    public static void writeJsonErrorResponse(HttpServletResponse response, String message)
+    public static void writeJsonResponse(HttpServletResponse response, String key, Object value)
             throws IOException {
 
         var content = new HashMap<String, Object>();
-        content.put("error", message);
+        content.put(key, value);
         writeJsonResponse(response, content);
     }
+    
 }

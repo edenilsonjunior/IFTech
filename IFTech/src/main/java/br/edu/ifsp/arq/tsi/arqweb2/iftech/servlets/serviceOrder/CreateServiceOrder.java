@@ -20,7 +20,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 
 
-@WebServlet("/createOrder")
+@WebServlet("/api/order/create")
 @MultipartConfig
 public class CreateServiceOrder extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -49,10 +49,10 @@ public class CreateServiceOrder extends HttpServlet {
             var order = createServiceOrder(request);
 
             orderDao.create(order, customer);
-            response.sendRedirect("views/order/service-order-list.html");
+            response.sendRedirect(request.getContextPath()+"/views/order/service-order-list.html");
         } catch (CustomHttpException e) {
             response.setStatus(e.getStatusCode());
-            Utils.writeJsonErrorResponse(response, e.getMessage());
+            Utils.writeJsonResponse(response, "error", e.getMessage());
         }
     }
 

@@ -6,7 +6,7 @@ const loadOrders = async () => {
     tableBody.innerHTML = '';
 
 
-    var data = await submitGet("/retrieveOrders");
+    var data = await submitGet("/api/order/retrieve");
 
     if (data.orders.length === 0) {
         const noDataRow = document.createElement('tr');
@@ -57,7 +57,7 @@ const deleteOrder = async (id) => {
     if (result.isConfirmed) {
         console.log("Excluir ordem de serviço com id: " + id);
 
-        var data = await submitGet(`/deleteOrder?id=${id}`);
+        var data = await submitGet(`/api/order/delete?id=${id}`);
 
         if (data.success) {
             const successMessageElement = document.getElementById('success-message');

@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 
-@WebServlet("/retrieveOrders")
+@WebServlet("/api/order/retrieve")
 public class RetrieveOrders extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -38,7 +38,7 @@ public class RetrieveOrders extends HttpServlet {
 
         } catch (CustomHttpException e) {
             response.setStatus(e.getStatusCode());
-            Utils.writeJsonErrorResponse(response, e.getMessage());
+            Utils.writeJsonResponse(response, "error", e.getMessage());
         }
     }
 }

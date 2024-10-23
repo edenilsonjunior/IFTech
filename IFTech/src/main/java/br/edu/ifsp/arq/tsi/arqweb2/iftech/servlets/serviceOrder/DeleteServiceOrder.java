@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 
-@WebServlet("/deleteOrder")
+@WebServlet("/api/order/delete")
 public class DeleteServiceOrder extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -41,7 +41,7 @@ public class DeleteServiceOrder extends HttpServlet {
 
         } catch (CustomHttpException e) {
             response.setStatus(e.getStatusCode());
-            Utils.writeJsonErrorResponse(response, e.getMessage());
+            Utils.writeJsonResponse(response,"error", e.getMessage());
         }
     }
 }

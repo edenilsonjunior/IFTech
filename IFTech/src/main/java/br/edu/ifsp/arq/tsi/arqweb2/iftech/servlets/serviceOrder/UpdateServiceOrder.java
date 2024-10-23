@@ -19,7 +19,7 @@ import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order.PaymentMethod;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.DataSourceSearcher;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.Utils;
 
-@WebServlet("/updateOrder")
+@WebServlet("/api/order/update")
 @MultipartConfig
 public class UpdateServiceOrder extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -76,10 +76,11 @@ public class UpdateServiceOrder extends HttpServlet {
             content.put("success", "sucesso ao cancelar a ordem de serviço");
             Utils.writeJsonResponse(response, content);
 
-            response.sendRedirect("views/order/service-order-list.html");
+            response.sendRedirect(request.getContextPath()+"/views/order/service-order-list.html");
 
         } catch (CustomHttpException e) {
-            Utils.writeJsonErrorResponse(response, e.getMessage());
+            response.setStatus(e.getStatusCode());
+            Utils.writeJsonResponse(response, "error", e.getMessage());
         }
     }
 }

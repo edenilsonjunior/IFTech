@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
-@WebServlet("/login")
+@WebServlet("/api/customer/login")
 @MultipartConfig
 public class LoginCustomer extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -24,14 +24,7 @@ public class LoginCustomer extends HttpServlet {
         super();
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String url = "views/customer/login.html";
-        response.sendRedirect(url);
-    }
-
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -41,7 +34,7 @@ public class LoginCustomer extends HttpServlet {
             String password = PasswordEncoder.encode(request.getParameter("password"));
 
             if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
-                Utils.writeJsonErrorResponse(response, "Email ou senha não podem estar vazios.");
+                Utils.writeJsonResponse(response, "error", "Email ou senha não podem estar vazios.");
                 return;
             }
 
@@ -49,7 +42,7 @@ public class LoginCustomer extends HttpServlet {
             var customer = customerDao.getCustomerByEmail(email);
 
             if (!customer.checkPassword(password)) {
-                Utils.writeJsonErrorResponse(response,  "Não foi possível realizar Login, verifique a senha");
+                Utils.writeJsonResponse(response, "error", "Não foi possível realizar Login, verifique a senha");
                 return;
             }
 
@@ -60,7 +53,7 @@ public class LoginCustomer extends HttpServlet {
 
         } catch (CustomHttpException e) {
             response.setStatus(e.getStatusCode());
-            Utils.writeJsonErrorResponse(response, e.getMessage());
+            Utils.writeJsonResponse(response,"error", e.getMessage());
         }
     }
 }
