@@ -2,7 +2,6 @@ package br.edu.ifsp.arq.tsi.arqweb2.iftech.servlets.serviceOrder;
 
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.exception.CustomHttpException;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao.ServiceOrderDao;
-import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.Utils;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.DataSourceSearcher;
 import jakarta.servlet.ServletException;
@@ -29,7 +28,7 @@ public class RetrieveOrders extends HttpServlet {
 
         try {
             var content = new HashMap<String, Object>();
-            var customer = (Customer) request.getSession().getAttribute("customer");
+            var customer = Utils.getCustomer(request);
 
             var orderDao = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource());
             var orders = orderDao.getOrdersByCustomer(customer);

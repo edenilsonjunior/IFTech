@@ -2,7 +2,6 @@ package br.edu.ifsp.arq.tsi.arqweb2.iftech.servlets.serviceOrder;
 
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.exception.CustomHttpException;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao.ServiceOrderDao;
-import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order.OrderStatus;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order.PaymentMethod;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order.ServiceOrder;
@@ -18,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 
 
 @WebServlet("/createOrder")
@@ -33,8 +33,11 @@ public class CreateServiceOrder extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String url = "views/order/service-order-register.html";
-        response.sendRedirect(url);
+        var dao = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource());
+
+        var content = new HashMap<String, Object>();
+        content.put("paymentMethods", dao.getPaymentMethods());
+        Utils.writeJsonResponse(response, content);
     }
 
 
@@ -42,7 +45,7 @@ public class CreateServiceOrder extends HttpServlet {
 
         try {
             var orderDao = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource());
-            var customer = (Customer) request.getSession().getAttribute("customer");
+            var customer = Utils.getCustomer(request);
             var order = createServiceOrder(request);
 
             orderDao.create(order, customer);
