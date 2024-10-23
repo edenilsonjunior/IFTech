@@ -1,4 +1,4 @@
-import {submitGet} from '../components/global.js';
+import {contextPath, submitGet} from '../components/global.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -31,3 +31,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
 });
+
+document.getElementById("new-service-order").href = `${contextPath}/views/order/service-order-register.html`;
