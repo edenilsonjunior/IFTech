@@ -1,11 +1,10 @@
 package br.edu.ifsp.arq.tsi.arqweb2.iftech.servlets.serviceOrder;
 
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.exception.CustomHttpException;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao.ServiceOrderDao;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.Utils;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.DataSourceSearcher;
-import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.LocalDateAdapter;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.HashMap;
 
 
@@ -26,29 +24,22 @@ public class RetrieveOrders extends HttpServlet {
     }
 
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-        var customer = (Customer) request.getSession().getAttribute("customer");
+        try {
+            var content = new HashMap<String, Object>();
+            var customer = (Customer) request.getSession().getAttribute("customer");
 
-        var orderDao = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource());
+            var orderDao = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource());
+            var orders = orderDao.getOrdersByCustomer(customer);
 
-        var content = new HashMap<String, Object>();
-        content.put("orders", orderDao.getOrdersByCustomer(customer));
+            content.put("orders", orders);
+            Utils.writeJsonResponse(response, content);
 
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-                .create();
-
-        var serializedResponse = gson.toJson(content);
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().print(serializedResponse);
-    }
-
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
+        } catch (CustomHttpException e) {
+            response.setStatus(e.getStatusCode());
+            Utils.writeJsonErrorResponse(response, e.getMessage());
+        }
     }
 }

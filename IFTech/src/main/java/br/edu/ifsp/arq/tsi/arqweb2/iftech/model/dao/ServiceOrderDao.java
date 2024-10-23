@@ -1,5 +1,6 @@
 package br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao;
 
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.exception.CustomHttpException;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order.OrderStatus;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order.PaymentMethod;
@@ -21,7 +22,7 @@ public class ServiceOrderDao {
         this.dataSource = dataSource;
     }
 
-    public boolean create(ServiceOrder order, Customer customer){
+    public ServiceOrder create(ServiceOrder order, Customer customer){
 
         var paymentMethodSQl = "INSERT INTO payment_method (name) VALUES (?);";
 
@@ -34,7 +35,7 @@ public class ServiceOrderDao {
         try(
             var conn = dataSource.getConnection();
             var psPaymentMethod = conn.prepareStatement(paymentMethodSQl, PreparedStatement.RETURN_GENERATED_KEYS);
-            var psServiceOrder = conn.prepareStatement(serviceOrderSql)
+            var psServiceOrder = conn.prepareStatement(serviceOrderSql, PreparedStatement.RETURN_GENERATED_KEYS)
         ){
             psPaymentMethod.setString(1, order.getPaymentMethod().getName());
 
@@ -57,10 +58,15 @@ public class ServiceOrderDao {
 
             psServiceOrder.executeUpdate();
 
+            var rs2 = psServiceOrder.getGeneratedKeys();
+            if(rs2.next()){
+                order.setId(rs2.getLong(1));
+            }
+
+            return order;
         }catch (SQLException e) {
-            throw new RuntimeException("Erro durante a escrita no BD", e);
+            throw new CustomHttpException(e.getErrorCode(), "Erro SQL: " + e.getMessage());
         }
-        return true;
     }
 
     public boolean updateStatus(long serviceOrderId, OrderStatus status){
@@ -130,10 +136,7 @@ public class ServiceOrderDao {
                 paymentMethod.setName(rs.getString(9));
 
                 order.setPaymentMethod(paymentMethod);
-                order.setCustomer(customer);
-
                 list.add(order);
-
             }
             return list;
         } catch (SQLException sqlException) {

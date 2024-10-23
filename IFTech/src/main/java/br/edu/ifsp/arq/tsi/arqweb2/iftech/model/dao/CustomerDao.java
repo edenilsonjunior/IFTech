@@ -1,14 +1,16 @@
 package br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao;
 
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.exception.CustomHttpException;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Address;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.DataSourceSearcher;
+import jakarta.servlet.http.HttpServletResponse;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 public class CustomerDao {
@@ -19,10 +21,13 @@ public class CustomerDao {
         this.dataSource = dataSource;
     }
 
-    public Boolean create(Customer customer) {
+    public Customer create(Customer customer) {
 
-        if(existsByCPF(customer.getCpf()) || existsByEmail(customer.getEmail()))
-            return false;
+        if(existsByCPF(customer.getCpf()))
+            throw new CustomHttpException(HttpServletResponse.SC_BAD_REQUEST, "Já existe um cliente com esse cpf");
+
+        if(existsByEmail(customer.getEmail()))
+            throw new CustomHttpException(HttpServletResponse.SC_BAD_REQUEST, "Já existe um cliente com esse email");
 
         String customerSql = """
                 INSERT INTO customer (name, cpf, email, password, phone, active) VALUES
@@ -33,7 +38,6 @@ public class CustomerDao {
                 INSERT INTO address (id, street, number, complement, district, zip_code, city, state)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
             """;
-
 
         try(
             var conn = dataSource.getConnection();
@@ -65,11 +69,10 @@ public class CustomerDao {
             psAddress.setString(8, address.getState());
             psAddress.executeUpdate();
 
+            return customer;
         }catch (SQLException e) {
-            throw new RuntimeException("Erro durante a escrita no BD", e);
+            throw new CustomHttpException(e.getErrorCode(), "Erro SQL: " + e.getMessage());
         }
-
-        return true;
     }
 
     public List<Customer> getCustomers() {
@@ -92,7 +95,7 @@ public class CustomerDao {
                     A.state
                 FROM customer C
                 JOIN address A
-                	ON A.id = C.address_id;
+                	ON A.id = C.id;
                 """ ;
 
         var list = new ArrayList<Customer>();
@@ -121,6 +124,9 @@ public class CustomerDao {
 
                     customer.setAddress(address);
 
+                    var orders = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource()).getOrdersByCustomer(customer);
+                    customer.setOrders(orders);
+
                     list.add(customer);
                 }
             }
@@ -130,7 +136,10 @@ public class CustomerDao {
         }
     }
 
-    public Optional<Customer> getCustomerByEmail(String email) {
+    public Customer getCustomerByEmail(String email) {
+
+        if(!existsByEmail(email))
+            throw new CustomHttpException(HttpServletResponse.SC_NOT_FOUND, "Não existe cliente com esse email");
 
         String sql = """
                 SELECT
@@ -154,8 +163,6 @@ public class CustomerDao {
                 WHERE C.email = ?;
                 """ ;
 
-        Optional<Customer> optional = Optional.empty();
-
         try (var con = dataSource.getConnection(); var ps = con.prepareStatement(sql)) {
             ps.setString(1, email);
 
@@ -171,22 +178,25 @@ public class CustomerDao {
                     customer.setActive(rs.getBoolean(7));
 
                     var address = new Address();
-                    address.setStreet(rs.getString(1));
-                    address.setNumber(rs.getString(2));
-                    address.setComplement(rs.getString(3));
-                    address.setDistrict(rs.getString(4));
-                    address.setZipCode(rs.getString(5));
-                    address.setCity(rs.getString(6));
-                    address.setState(rs.getString(7));
+                    address.setStreet(rs.getString(8));
+                    address.setNumber(rs.getString(9));
+                    address.setComplement(rs.getString(10));
+                    address.setDistrict(rs.getString(11));
+                    address.setZipCode(rs.getString(12));
+                    address.setCity(rs.getString(13));
+                    address.setState(rs.getString(14));
 
                     customer.setAddress(address);
 
-                    optional = Optional.of(customer);
+                    var orders = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource()).getOrdersByCustomer(customer);
+                    customer.setOrders(orders);
+
+                    return customer;
                 }
+                throw new CustomHttpException(HttpServletResponse.SC_NOT_FOUND, "Não existe cliente com esse email");
             }
-            return optional;
-        } catch (SQLException sqlException) {
-            throw new RuntimeException("Erro durante a consulta no BD", sqlException);
+        } catch (SQLException ex) {
+            throw new CustomHttpException(ex.getErrorCode(), "Error SQL: " + ex.getMessage());
         }
     }
 
