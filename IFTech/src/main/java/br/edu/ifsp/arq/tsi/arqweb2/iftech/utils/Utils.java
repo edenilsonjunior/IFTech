@@ -19,7 +19,12 @@ public class Utils {
                                 .create();
 
     public static Customer getCustomer(HttpServletRequest request) {
-        return (Customer) request.getSession(false).getAttribute("customer");
+
+        try{
+            return (Customer) request.getSession(false).getAttribute("customer");
+        }catch (Exception e){
+            return null;
+        }
     }
 
     public static Boolean isLoggedIn(HttpServletRequest request) {

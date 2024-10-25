@@ -22,7 +22,7 @@ const loadNavbarLinks = () =>{
 
     document.getElementById('nav-links').innerHTML = `
         <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="${contextPath}/index.html">Página Inicial</a>
+            <a class="nav-link" aria-current="page" href="${contextPath}/index.html">Página Inicial</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="${contextPath}/views/order/service-order-list.html">Ordens de serviço</a>

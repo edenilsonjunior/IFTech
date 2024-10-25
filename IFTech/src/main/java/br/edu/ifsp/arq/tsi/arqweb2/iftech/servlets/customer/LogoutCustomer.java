@@ -18,11 +18,11 @@ public class LogoutCustomer extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        var session = req.getSession(false);
+        var session = request.getSession(false);
         session.invalidate();
-        req.getRequestDispatcher("index.html").forward(req, resp);
+        response.sendRedirect(request.getContextPath() +"/index.html");
     }
 }

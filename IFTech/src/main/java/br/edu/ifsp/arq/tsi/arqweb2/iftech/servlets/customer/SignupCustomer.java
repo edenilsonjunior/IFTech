@@ -43,35 +43,22 @@ public class SignupCustomer extends HttpServlet {
     }
 
     private Customer createCustomer(HttpServletRequest request){
-        String name = request.getParameter("name");
-        String cpf = request.getParameter("cpf");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone");
-        String password = PasswordEncoder.encode(request.getParameter("password"));
-
-        String street = request.getParameter("street");
-        String number = request.getParameter("number");
-        String complement = request.getParameter("complement");
-        String district = request.getParameter("district");
-        String zipCode = request.getParameter("zipCode");
-        String city = request.getParameter("city");
-        String state = request.getParameter("state");
 
         var customer = new Customer();
-        customer.setName(name);
-        customer.setEmail(email);
-        customer.setPhone(phone);
-        customer.setCpf(cpf);
-        customer.setPassword(password);
+        customer.setName(request.getParameter("name"));
+        customer.setEmail(request.getParameter("email"));
+        customer.setPhone(request.getParameter("phone"));
+        customer.setCpf(request.getParameter("cpf"));
+        customer.setPassword(PasswordEncoder.encode(request.getParameter("password")));
 
         var address = new Address();
-        address.setStreet(street);
-        address.setNumber(number);
-        address.setComplement(complement);
-        address.setDistrict(district);
-        address.setZipCode(zipCode);
-        address.setCity(city);
-        address.setState(state);
+        address.setStreet(request.getParameter("street"));
+        address.setNumber(request.getParameter("number"));
+        address.setComplement(request.getParameter("complement"));
+        address.setDistrict(request.getParameter("district"));
+        address.setZipCode(request.getParameter("zipCode"));
+        address.setCity(request.getParameter("city"));
+        address.setState(request.getParameter("state"));
 
         customer.setAddress(address);
 

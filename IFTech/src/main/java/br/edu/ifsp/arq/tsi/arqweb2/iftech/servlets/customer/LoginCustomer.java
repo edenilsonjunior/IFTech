@@ -49,7 +49,7 @@ public class LoginCustomer extends HttpServlet {
             var session = request.getSession();
             session.setMaxInactiveInterval(600);
             session.setAttribute("customer", customer);
-            response.sendRedirect("index.html");
+            response.sendRedirect(request.getContextPath() +"/index.html");
 
         } catch (CustomHttpException e) {
             response.setStatus(e.getStatusCode());

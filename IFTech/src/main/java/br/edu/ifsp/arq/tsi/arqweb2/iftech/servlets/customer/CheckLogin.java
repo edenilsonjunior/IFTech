@@ -22,10 +22,10 @@ public class CheckLogin extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        var isLoggedIn = Utils.isLoggedIn(request);
-
         var content = new HashMap<String, Object>();
-        content.put("loggedIn", isLoggedIn);
+        content.put("loggedIn", Utils.isLoggedIn(request));
+        content.put("customer", Utils.getCustomer(request));
+
         Utils.writeJsonResponse(response, content);
     }
 }
