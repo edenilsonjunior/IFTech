@@ -18,8 +18,18 @@ const loadOrders = async () => {
         const row = document.createElement('tr');
         row.id = `order-${order.id}`;
 
+        const status = {
+            PENDING_APPROVAL: 'Pendente de aprovação',
+            APPROVED: 'Aprovado',
+            IN_PROGRESS: 'Em andamento',
+            COMPLETED: 'Concluído',
+            CANCELED: 'Cancelado'
+        };
+
+        order.status = status[order.status];
+
         row.innerHTML = `
-                <td>${order.id}</td>
+                <td scope="row">${order.id}</td>
                 <td>${order.description}</td>
                 <td>${order.status}</td>
                 <td>${order.issueDate}</td>
