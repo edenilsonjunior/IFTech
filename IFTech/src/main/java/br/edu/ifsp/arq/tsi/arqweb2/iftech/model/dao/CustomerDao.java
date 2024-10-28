@@ -75,6 +75,49 @@ public class CustomerDao {
         }
     }
 
+    public Customer update(Customer customer) {
+        String updateCustomerSql = """
+                UPDATE customer
+                SET password = ?, phone = ?
+                WHERE id = ?;
+            """;
+    
+        String updateAddressSql = """
+                UPDATE address
+                SET street = ?, number = ?, complement = ?, district = ?, zip_code = ?, city = ?, state = ?
+                WHERE id = ?;
+            """;
+    
+        try (
+            var conn = dataSource.getConnection();
+            var psCustomer = conn.prepareStatement(updateCustomerSql);
+            var psAddress = conn.prepareStatement(updateAddressSql);
+        ) {
+            // Atualizar campos do cliente
+            psCustomer.setString(1, customer.getPassword());
+            psCustomer.setString(2, customer.getPhone());
+            psCustomer.setLong(3, customer.getId());
+            psCustomer.executeUpdate();
+    
+            // Atualizar campos do endereço
+            var address = customer.getAddress();
+            psAddress.setString(1, address.getStreet());
+            psAddress.setString(2, address.getNumber());
+            psAddress.setString(3, address.getComplement());
+            psAddress.setString(4, address.getDistrict());
+            psAddress.setString(5, address.getZipCode());
+            psAddress.setString(6, address.getCity());
+            psAddress.setString(7, address.getState());
+            psAddress.setLong(8, address.getId());
+            psAddress.executeUpdate();
+    
+            return customer;
+        } catch (SQLException e) {
+            throw new CustomHttpException(e.getErrorCode(), "Erro SQL: " + e.getMessage());
+        }
+    }
+
+
     public List<Customer> getCustomers() {
 
         String sql = """
