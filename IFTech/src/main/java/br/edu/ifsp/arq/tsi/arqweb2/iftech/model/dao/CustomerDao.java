@@ -1,283 +1,134 @@
 package br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao;
 
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.exception.CustomHttpException;
-import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Address;
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao.queries.CustomerQueries;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
-import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.DataSourceSearcher;
 import jakarta.servlet.http.HttpServletResponse;
 
 import javax.sql.DataSource;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class CustomerDao {
 
     private final DataSource dataSource;
+    private final AddressDao addressDao;
+    private final ServiceOrderDao serviceOrderDao;
 
     public CustomerDao(DataSource dataSource) {
         this.dataSource = dataSource;
+        this.addressDao = new AddressDao(dataSource);
+        this.serviceOrderDao = new ServiceOrderDao(dataSource);
     }
 
     public Customer create(Customer customer) {
 
-        if(existsByCPF(customer.getCpf()))
+        if (exists("cpf", customer.getCpf()))
             throw new CustomHttpException(HttpServletResponse.SC_BAD_REQUEST, "Já existe um cliente com esse cpf");
 
-        if(existsByEmail(customer.getEmail()))
+        if (exists("email", customer.getEmail()))
             throw new CustomHttpException(HttpServletResponse.SC_BAD_REQUEST, "Já existe um cliente com esse email");
 
-        String customerSql = """
-                INSERT INTO customer (name, cpf, email, password, phone, active) VALUES
-                (?, ?, ?, ?, ?, ?);
-            """;
 
-        String addressSql = """
-                INSERT INTO address (id, street, number, complement, district, zip_code, city, state)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-            """;
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(CustomerQueries.INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-        try(
-            var conn = dataSource.getConnection();
-            var psCustomer = conn.prepareStatement(customerSql, PreparedStatement.RETURN_GENERATED_KEYS);
-            var psAddress = conn.prepareStatement(addressSql);
-        ){
-            psCustomer.setString(1, customer.getName());
-            psCustomer.setString(2, customer.getCpf());
-            psCustomer.setString(3, customer.getEmail());
-            psCustomer.setString(4, customer.getPassword());
-            psCustomer.setString(5, customer.getPhone());
-            psCustomer.setBoolean(6, customer.isActive());
-            psCustomer.executeUpdate();
+            ps.setString(1, customer.getName());
+            ps.setString(2, customer.getCpf());
+            ps.setString(3, customer.getEmail());
+            ps.setString(4, customer.getPassword());
+            ps.setString(5, customer.getPhone());
+            ps.setBoolean(6, customer.isActive());
+            ps.executeUpdate();
 
-            var rs = psCustomer.getGeneratedKeys();
-            if(rs.next()){
-                customer.setId(rs.getLong(1));
-                customer.getAddress().setId(rs.getLong(1));
+            var rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                Long id = rs.getLong(1);
+                customer.setId(id);
+                customer.getAddress().setId(id);
             }
 
-            var address = customer.getAddress();
-            psAddress.setLong(1, address.getId());
-            psAddress.setString(2, address.getStreet());
-            psAddress.setString(3, address.getNumber());
-            psAddress.setString(4, address.getComplement());
-            psAddress.setString(5, address.getDistrict());
-            psAddress.setString(6, address.getZipCode());
-            psAddress.setString(7, address.getCity());
-            psAddress.setString(8, address.getState());
-            psAddress.executeUpdate();
+            addressDao.create(customer.getAddress());
 
             return customer;
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             throw new CustomHttpException(e.getErrorCode(), "Erro SQL: " + e.getMessage());
         }
     }
 
     public Customer update(Customer customer) {
-        String updateCustomerSql = """
-                UPDATE customer
-                SET password = ?, phone = ?
-                WHERE id = ?;
-            """;
-    
-        String updateAddressSql = """
-                UPDATE address
-                SET street = ?, number = ?, complement = ?, district = ?, zip_code = ?, city = ?, state = ?
-                WHERE id = ?;
-            """;
-    
-        try (
-            var conn = dataSource.getConnection();
-            var psCustomer = conn.prepareStatement(updateCustomerSql);
-            var psAddress = conn.prepareStatement(updateAddressSql);
-        ) {
-            // Atualizar campos do cliente
-            psCustomer.setString(1, customer.getPassword());
-            psCustomer.setString(2, customer.getPhone());
-            psCustomer.setLong(3, customer.getId());
-            psCustomer.executeUpdate();
-    
-            // Atualizar campos do endereço
-            var address = customer.getAddress();
-            psAddress.setString(1, address.getStreet());
-            psAddress.setString(2, address.getNumber());
-            psAddress.setString(3, address.getComplement());
-            psAddress.setString(4, address.getDistrict());
-            psAddress.setString(5, address.getZipCode());
-            psAddress.setString(6, address.getCity());
-            psAddress.setString(7, address.getState());
-            psAddress.setLong(8, address.getId());
-            psAddress.executeUpdate();
-    
+
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(CustomerQueries.UPDATE);) {
+
+            ps.setString(1, customer.getPassword());
+            ps.setString(2, customer.getPhone());
+            ps.setLong(3, customer.getId());
+
+            ps.executeUpdate();
+            addressDao.update(customer.getAddress());
+
             return customer;
         } catch (SQLException e) {
             throw new CustomHttpException(e.getErrorCode(), "Erro SQL: " + e.getMessage());
         }
     }
 
+    public Customer findCustomerByEmail(String email) {
 
-    public List<Customer> getCustomers() {
-
-        String sql = """
-                SELECT
-                	C.id,
-                	C.name,
-                    C.cpf,
-                    C.email,
-                    C.password,
-                    C.phone,
-                    C.active,
-                    A.street,
-                    A.number,
-                    A.complement,
-                    A.district,
-                    A.zip_code,
-                    A.city,
-                    A.state
-                FROM customer C
-                JOIN address A
-                	ON A.id = C.id;
-                """ ;
-
-        var list = new ArrayList<Customer>();
-
-        try (var con = dataSource.getConnection(); var ps = con.prepareStatement(sql)) {
-
-            try (var rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    var customer = new Customer();
-                    customer.setId(rs.getLong(1));
-                    customer.setName(rs.getString(2));
-                    customer.setCpf(rs.getString(3));
-                    customer.setEmail(rs.getString(4));
-                    customer.setPassword(rs.getString(5));
-                    customer.setPhone(rs.getString(6));
-                    customer.setActive(rs.getBoolean(7));
-
-                    var address = new Address();
-                    address.setStreet(rs.getString(8));
-                    address.setNumber(rs.getString(9));
-                    address.setComplement(rs.getString(10));
-                    address.setDistrict(rs.getString(11));
-                    address.setZipCode(rs.getString(12));
-                    address.setCity(rs.getString(13));
-                    address.setState(rs.getString(14));
-
-                    customer.setAddress(address);
-
-                    var orders = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource()).getOrdersByCustomer(customer);
-                    customer.setOrders(orders);
-
-                    list.add(customer);
-                }
-            }
-            return list;
-        } catch (SQLException sqlException) {
-            throw new RuntimeException("Erro durante a consulta no BD", sqlException);
-        }
-    }
-
-    public Customer getCustomerByEmail(String email) {
-
-        if(!existsByEmail(email))
+        if (!exists("email", email))
             throw new CustomHttpException(HttpServletResponse.SC_NOT_FOUND, "Não existe cliente com esse email");
 
-        String sql = """
-                SELECT
-                	C.id,
-                	C.name,
-                    C.cpf,
-                    C.email,
-                    C.password,
-                    C.phone,
-                    C.active,
-                    A.street,
-                    A.number,
-                    A.complement,
-                    A.district,
-                    A.zip_code,
-                    A.city,
-                    A.state
-                FROM customer C
-                JOIN address A
-                	ON A.id = C.id
-                WHERE C.email = ?;
-                """ ;
+        
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(CustomerQueries.SELECT_BY_EMAIL);) {
 
-        try (var con = dataSource.getConnection(); var ps = con.prepareStatement(sql)) {
             ps.setString(1, email);
+            var rs = ps.executeQuery();
 
-            try (var rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    var customer = new Customer();
-                    customer.setId(rs.getLong(1));
-                    customer.setName(rs.getString(2));
-                    customer.setCpf(rs.getString(3));
-                    customer.setEmail(rs.getString(4));
-                    customer.setPassword(rs.getString(5));
-                    customer.setPhone(rs.getString(6));
-                    customer.setActive(rs.getBoolean(7));
+            var customer = new Customer();
 
-                    var address = new Address();
-                    address.setStreet(rs.getString(8));
-                    address.setNumber(rs.getString(9));
-                    address.setComplement(rs.getString(10));
-                    address.setDistrict(rs.getString(11));
-                    address.setZipCode(rs.getString(12));
-                    address.setCity(rs.getString(13));
-                    address.setState(rs.getString(14));
+            if (rs.next()) {
+                customer.setId(rs.getLong("id"));
+                customer.setName(rs.getString("name"));
+                customer.setCpf(rs.getString("cpf"));
+                customer.setEmail(rs.getString("email"));
+                customer.setPassword(rs.getString("password"));
+                customer.setPhone(rs.getString("phone"));
+                customer.setActive(rs.getBoolean("active"));
 
-                    customer.setAddress(address);
+                var orders = serviceOrderDao.getOrdersByCustomer(customer);
+                var address = addressDao.findByCustomer(customer);
 
-                    var orders = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource()).getOrdersByCustomer(customer);
-                    customer.setOrders(orders);
-
-                    return customer;
-                }
-                throw new CustomHttpException(HttpServletResponse.SC_NOT_FOUND, "Não existe cliente com esse email");
+                customer.setOrders(orders);
+                customer.setAddress(address);
             }
+
+            return customer;
+
         } catch (SQLException ex) {
             throw new CustomHttpException(ex.getErrorCode(), "Error SQL: " + ex.getMessage());
         }
     }
 
-    public boolean existsByCPF(String cpf){
-        String sql = "SELECT COUNT(*) FROM customer WHERE cpf = ?";
+    private boolean exists(String field, String value) {
+
+        var sql = String.format(CustomerQueries.EXISTS, field);
 
         try (var conn = dataSource.getConnection();
-             var ps = conn.prepareStatement(sql)) {
-            ps.setString(1, cpf);
+                var ps = conn.prepareStatement(sql)) {
 
+            ps.setString(1, value);
+            
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro durante a consulta no BD", e);
-        }
-
-        return false;
-    }
-
-    public boolean existsByEmail(String email){
-        String sql = "SELECT COUNT(*) FROM customer WHERE email = ?";
-
-        try (var conn = dataSource.getConnection();
-             var ps = conn.prepareStatement(sql)) {
-            ps.setString(1, email);
-
-            try (var rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro durante a consulta no BD", e);
+            throw new CustomHttpException(e.getErrorCode(), "Erro SQL: " + e.getMessage());
         }
         return false;
     }
-
 }

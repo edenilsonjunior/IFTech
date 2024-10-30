@@ -1,6 +1,7 @@
 package br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao;
 
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.exception.CustomHttpException;
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao.queries.ServiceOrderQueries;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order.OrderStatus;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order.PaymentMethod;
@@ -26,20 +27,14 @@ public class ServiceOrderDao {
 
     public ServiceOrder create(ServiceOrder order, Customer customer) {
 
-        if(!existsPaymentMethodByName(order.getPaymentMethod().getName()))
+        if (!existsPaymentMethodByName(order.getPaymentMethod().getName()))
             order.setPaymentMethod(createPaymentMethod(order.getPaymentMethod()));
         else
             order.setPaymentMethod(getPaymentMethodByName(order.getPaymentMethod().getName()));
 
-
-        var serviceOrderSql = """
-                INSERT INTO service_order (customer_id, description, status, price, issue_date, end_date, observation, payment_method_id)
-                VALUES (?,?,?,?,?,?,?, ?);
-            """;
-
-        try (
-                var conn = dataSource.getConnection();
-                var psServiceOrder = conn.prepareStatement(serviceOrderSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        try (var conn = dataSource.getConnection();
+                var psServiceOrder = conn.prepareStatement(ServiceOrderQueries.INSERT,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
 
             psServiceOrder.setLong(1, customer.getId());
             psServiceOrder.setString(2, order.getDescription());
@@ -65,26 +60,14 @@ public class ServiceOrderDao {
 
     public boolean update(ServiceOrder order) {
 
-        if(!existsPaymentMethodByName(order.getPaymentMethod().getName()))
+        if (!existsPaymentMethodByName(order.getPaymentMethod().getName()))
             order.setPaymentMethod(createPaymentMethod(order.getPaymentMethod()));
         else
             order.setPaymentMethod(getPaymentMethodByName(order.getPaymentMethod().getName()));
 
-        var updateSql = """
-                UPDATE service_order
-                SET description = ?,
-                    status = ?,
-                    price = ?,
-                    issue_date = ?,
-                    end_date = ?,
-                    observation = ?,
-                    payment_method_id = ?
-                WHERE id = ?;
-                """;
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(ServiceOrderQueries.UPDATE)) {
 
-        try (
-                var conn = dataSource.getConnection();
-                var ps = conn.prepareStatement(updateSql)) {
             ps.setString(1, order.getDescription());
             ps.setString(2, order.getStatus().toString());
             ps.setBigDecimal(3, order.getPrice());
@@ -118,43 +101,27 @@ public class ServiceOrderDao {
 
     public List<ServiceOrder> getOrdersByCustomer(Customer customer) {
 
-        String sql = """
-                SELECT
-                    SO.id,
-                    SO.description,
-                    SO.status,
-                    SO.price,
-                    SO.issue_date,
-                    SO.end_date,
-                    SO.observation,
-                    PM.id,
-                    PM.name
-                FROM service_order SO
-                JOIN payment_method PM
-                    ON PM.id = SO.payment_method_id
-                WHERE SO.customer_id = ?;
-                """;
-
         var list = new ArrayList<ServiceOrder>();
 
-        try (var con = dataSource.getConnection(); var ps = con.prepareStatement(sql)) {
+        try (var con = dataSource.getConnection();
+                var ps = con.prepareStatement(ServiceOrderQueries.SELECT_ORDER_BY_CUSTOMER_ID)) {
 
             ps.setLong(1, customer.getId());
 
             var rs = ps.executeQuery();
             while (rs.next()) {
                 var order = new ServiceOrder();
-                order.setId(rs.getLong(1));
-                order.setDescription(rs.getString(2));
-                order.setStatus(OrderStatus.valueOf(rs.getString(3)));
-                order.setPrice(rs.getBigDecimal(4));
-                order.setIssueDate(LocalDate.parse(rs.getDate(5).toString()));
-                order.setEndDate(LocalDate.parse(rs.getDate(6).toString()));
-                order.setObservation(rs.getString(7));
+                order.setId(rs.getLong("id"));
+                order.setDescription(rs.getString("description"));
+                order.setStatus(OrderStatus.valueOf(rs.getString("status")));
+                order.setPrice(rs.getBigDecimal("price"));
+                order.setIssueDate(LocalDate.parse(rs.getDate("issue_date").toString()));
+                order.setEndDate(LocalDate.parse(rs.getDate("end_date").toString()));
+                order.setObservation(rs.getString("observation"));
 
                 var paymentMethod = new PaymentMethod();
-                paymentMethod.setId(rs.getLong(8));
-                paymentMethod.setName(rs.getString(9));
+                paymentMethod.setId(rs.getLong("payment_method_id"));
+                paymentMethod.setName(rs.getString("payment_method_name"));
 
                 order.setPaymentMethod(paymentMethod);
                 list.add(order);
@@ -167,11 +134,9 @@ public class ServiceOrderDao {
 
     public boolean existsById(Long orderId) {
 
-        var sql = " SELECT COUNT(*) FROM service_order WHERE id = ?;";
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(ServiceOrderQueries.EXISTS_BY_ID)) {
 
-        try (
-                var conn = dataSource.getConnection();
-                var ps = conn.prepareStatement(sql)) {
             ps.setLong(1, orderId);
             var rs = ps.executeQuery();
             rs.next();
@@ -183,41 +148,25 @@ public class ServiceOrderDao {
 
     public ServiceOrder getOrderById(Long orderId) {
 
-        var sql = """
-                SELECT
-                    SO.id,
-                    SO.description,
-                    SO.status,
-                    SO.price,
-                    SO.issue_date,
-                    SO.end_date,
-                    SO.observation,
-                    PM.id,
-                    PM.name
-                FROM service_order SO
-                JOIN payment_method PM
-                    ON PM.id = SO.payment_method_id
-                WHERE SO.id = ?;
-                """;
-
-        try (var con = dataSource.getConnection(); var ps = con.prepareStatement(sql)) {
+        try (var con = dataSource.getConnection();
+                var ps = con.prepareStatement(ServiceOrderQueries.SELECT_ORDER_BY_ID)) {
 
             ps.setLong(1, orderId);
 
             var rs = ps.executeQuery();
             if (rs.next()) {
                 var order = new ServiceOrder();
-                order.setId(rs.getLong(1));
-                order.setDescription(rs.getString(2));
-                order.setStatus(OrderStatus.valueOf(rs.getString(3)));
-                order.setPrice(rs.getBigDecimal(4));
-                order.setIssueDate(LocalDate.parse(rs.getDate(5).toString()));
-                order.setEndDate(LocalDate.parse(rs.getDate(6).toString()));
-                order.setObservation(rs.getString(7));
+                order.setId(rs.getLong("id"));
+                order.setDescription(rs.getString("description"));
+                order.setStatus(OrderStatus.valueOf(rs.getString("status")));
+                order.setPrice(rs.getBigDecimal("price"));
+                order.setIssueDate(LocalDate.parse(rs.getDate("issue_date").toString()));
+                order.setEndDate(LocalDate.parse(rs.getDate("end_date").toString()));
+                order.setObservation(rs.getString("observation"));
 
                 var paymentMethod = new PaymentMethod();
-                paymentMethod.setId(rs.getLong(8));
-                paymentMethod.setName(rs.getString(9));
+                paymentMethod.setId(rs.getLong("payment_method_id"));
+                paymentMethod.setName(rs.getString("payment_method_name"));
 
                 order.setPaymentMethod(paymentMethod);
                 return order;
@@ -230,11 +179,9 @@ public class ServiceOrderDao {
 
     public boolean existsPaymentMethodByName(String name) {
 
-        var sql = " SELECT COUNT(*) FROM payment_method WHERE name = ?;";
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(ServiceOrderQueries.EXISTS_PAYMENT_METHOD_BY_NAME)) {
 
-        try (
-                var conn = dataSource.getConnection();
-                var ps = conn.prepareStatement(sql)) {
             ps.setString(1, name);
             var rs = ps.executeQuery();
             rs.next();
@@ -246,13 +193,11 @@ public class ServiceOrderDao {
 
     public PaymentMethod createPaymentMethod(PaymentMethod paymentMethod) {
 
-        var sql = "INSERT INTO payment_method (name) VALUES (?);";
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(ServiceOrderQueries.INSERT_PAYMENT_METHOD,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-        try (
-                var conn = dataSource.getConnection();
-                var ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, paymentMethod.getName());
-
             ps.executeUpdate();
 
             var rs = ps.getGeneratedKeys();
@@ -266,19 +211,16 @@ public class ServiceOrderDao {
         }
     }
 
-    public PaymentMethod getPaymentMethodByName(String name){
+    public PaymentMethod getPaymentMethodByName(String name) {
 
-        var sql = "SELECT id FROM payment_method WHERE name = ?;";
-
-        try (
-                var conn = dataSource.getConnection();
-                var ps = conn.prepareStatement(sql)) {
+        try (var conn = dataSource.getConnection();
+                var ps = conn.prepareStatement(ServiceOrderQueries.SELECT_PAYMENT_METHOD_BY_NAME)) {
             ps.setString(1, name);
 
             var rs = ps.executeQuery();
             if (rs.next()) {
                 var paymentMethod = new PaymentMethod();
-                paymentMethod.setId(rs.getLong(1));
+                paymentMethod.setId(rs.getLong("id"));
                 paymentMethod.setName(name);
                 return paymentMethod;
             }
@@ -290,17 +232,16 @@ public class ServiceOrderDao {
 
     public List<PaymentMethod> getPaymentMethods() {
 
-        var sql = "SELECT id, name FROM payment_method;";
-
         var list = new ArrayList<PaymentMethod>();
 
-        try (var con = dataSource.getConnection(); var ps = con.prepareStatement(sql)) {
+        try (var con = dataSource.getConnection();
+                var ps = con.prepareStatement(ServiceOrderQueries.SELECT_PAYMENT_METHODS)) {
 
             var rs = ps.executeQuery();
             while (rs.next()) {
                 var paymentMethod = new PaymentMethod();
-                paymentMethod.setId(rs.getLong(1));
-                paymentMethod.setName(rs.getString(2));
+                paymentMethod.setId(rs.getLong("id"));
+                paymentMethod.setName(rs.getString("name"));
                 list.add(paymentMethod);
             }
             return list;
@@ -308,6 +249,5 @@ public class ServiceOrderDao {
             throw new RuntimeException("Erro durante a consulta no BD", sqlException);
         }
     }
-
 
 }
