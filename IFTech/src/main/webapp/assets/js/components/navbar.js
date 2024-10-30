@@ -14,33 +14,43 @@ document.addEventListener('DOMContentLoaded', async () => {
 const customizeNavbar = async (loggedIn) => {
 
     document.getElementById('nav-logo').src = `${contextPath}/assets/images/iftech.jpg`;
-    loadNavbarLinks();
+    loadNavbarLinks(loggedIn);
     loadAuthLinks(loggedIn);
 };
 
-const loadNavbarLinks = () =>{
+const loadNavbarLinks = (loggedIn) =>{
 
-    document.getElementById('nav-links').innerHTML = `
+    document.getElementById('nav-links').innerHTML = 
+    `
         <li class="nav-item">
             <a class="nav-link" aria-current="page" href="${contextPath}/index.html">Página Inicial</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="${contextPath}/views/order/service-order-list.html">Ordens de serviço</a>
-        </li>
+
+        ${loggedIn ? 
+            `
+            <li class="nav-item">
+                <a class="nav-link" href="${contextPath}/views/order/service-order-list.html">Ordens de serviço</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="${contextPath}/views/order/payment-method-register.html">Cadastrar método de pagamento</a>
+            </li>
+            ` : ''} 
     `;
 }
 
 const loadAuthLinks = (loggedIn)  =>{
     const authLinks = document.getElementById('auth-links');
-    if (!loggedIn) {
-        authLinks.innerHTML = `
+
+    authLinks.innerHTML = 
+    ` ${loggedIn ?
+        `
             <li class="nav-item">
                 <a href="${contextPath}/views/customer/signup.html" class="btn btn-outline-secondary" role="button">SignUp</a>
                 <a href="${contextPath}/views/customer/login.html" class="btn btn-secondary" role="button">Login</a>
             </li>
-        `;
-    } else {
-        authLinks.innerHTML = `
+        ` 
+        : 
+        `
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" alt="user" width="30px">
@@ -51,7 +61,6 @@ const loadAuthLinks = (loggedIn)  =>{
                     <li><a class="dropdown-item" href="${contextPath}/api/customer/logout">Sair</a></li>
                 </ul>
             </li>
-        `;
-    }
-
+        ` }
+    `;
 }
