@@ -39,7 +39,7 @@ public class LoginCustomer extends HttpServlet {
             }
 
             var customerDao = new CustomerDao(DataSourceSearcher.getInstance().getDataSource());
-            var customer = customerDao.getCustomerByEmail(email);
+            var customer = customerDao.findCustomerByEmail(email);
 
             if (!customer.checkPassword(password)) {
                 Utils.writeJsonResponse(response, "error", "Não foi possível realizar Login, verifique a senha");

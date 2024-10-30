@@ -2,6 +2,7 @@ package br.edu.ifsp.arq.tsi.arqweb2.iftech.servlets.filters;
 
 import java.io.IOException;
 
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.Utils;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,8 +34,8 @@ public class ValidationFilter implements Filter {
             throws IOException, ServletException {
 
         var httpRequest = (HttpServletRequest) request;
-        var session = httpRequest.getSession(false);
-        if(session == null || session.getAttribute("customer") == null) {
+
+        if(Utils.getCustomer(httpRequest) == null) {
             var httpResponse = (HttpServletResponse)response;
             httpResponse.sendRedirect(httpRequest.getContextPath() + "/views/customer/login.html");
         }

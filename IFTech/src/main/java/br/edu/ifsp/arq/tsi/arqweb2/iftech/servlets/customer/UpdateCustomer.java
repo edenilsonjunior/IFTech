@@ -2,7 +2,6 @@ package br.edu.ifsp.arq.tsi.arqweb2.iftech.servlets.customer;
 
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.exception.CustomHttpException;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao.CustomerDao;
-import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Address;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.DataSourceSearcher;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.PasswordEncoder;
