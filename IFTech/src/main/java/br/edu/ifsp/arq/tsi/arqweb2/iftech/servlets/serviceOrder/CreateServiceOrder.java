@@ -50,6 +50,9 @@ public class CreateServiceOrder extends HttpServlet {
         } catch (CustomHttpException e) {
             response.setStatus(e.getStatusCode());
             Utils.writeJsonResponse(response, "error", e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(500);
+            Utils.writeJsonResponse(response, "error", e.getMessage());
         }
     }
 
