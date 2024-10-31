@@ -10,17 +10,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 
-
 @WebServlet("/api/customer/check-login")
 public class CheckLogin extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
 
     public CheckLogin() {
         super();
     }
 
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         var content = new HashMap<String, Object>();
         content.put("loggedIn", Utils.isLoggedIn(request));
@@ -28,4 +29,5 @@ public class CheckLogin extends HttpServlet {
 
         Utils.writeJsonResponse(response, content);
     }
+
 }

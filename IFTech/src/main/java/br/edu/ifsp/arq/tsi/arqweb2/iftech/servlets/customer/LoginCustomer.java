@@ -14,31 +14,31 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-
-@WebServlet("/api/customer/login")
 @MultipartConfig
+@WebServlet("/api/customer/login")
 public class LoginCustomer extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
+    private final CustomerDao customerDao;
 
     public LoginCustomer() {
         super();
+        this.customerDao = new CustomerDao(DataSourceSearcher.getInstance().getDataSource());
     }
 
-    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         try {
-            String email = request.getParameter("email");
-            String password = PasswordEncoder.encode(request.getParameter("password"));
+            var email = request.getParameter("email");
+            var password = PasswordEncoder.encode(request.getParameter("password"));
 
             if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
                 Utils.writeJsonResponse(response, "error", "Email ou senha não podem estar vazios.");
                 return;
             }
 
-            var customerDao = new CustomerDao(DataSourceSearcher.getInstance().getDataSource());
             var customer = customerDao.findCustomerByEmail(email);
 
             if (!customer.checkPassword(password)) {
@@ -49,11 +49,15 @@ public class LoginCustomer extends HttpServlet {
             var session = request.getSession();
             session.setMaxInactiveInterval(600);
             session.setAttribute("customer", customer);
-            response.sendRedirect(request.getContextPath() +"/index.html");
+            response.sendRedirect(request.getContextPath() + "/index.html");
 
         } catch (CustomHttpException e) {
             response.setStatus(e.getStatusCode());
-            Utils.writeJsonResponse(response,"error", e.getMessage());
+            Utils.writeJsonResponse(response, "error", e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(500);
+            Utils.writeJsonResponse(response, "error", e.getMessage());
         }
     }
+
 }

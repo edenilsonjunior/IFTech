@@ -193,6 +193,10 @@ public class ServiceOrderDao {
 
     public PaymentMethod createPaymentMethod(PaymentMethod paymentMethod) {
 
+        var paymentMethodExists = getPaymentMethodByName(paymentMethod.getName());
+        if (paymentMethodExists != null)
+            throw new CustomHttpException(HttpServletResponse.SC_CONFLICT, "Método de pagamento já existe");
+
         try (var conn = dataSource.getConnection();
                 var ps = conn.prepareStatement(ServiceOrderQueries.INSERT_PAYMENT_METHOD,
                         PreparedStatement.RETURN_GENERATED_KEYS)) {

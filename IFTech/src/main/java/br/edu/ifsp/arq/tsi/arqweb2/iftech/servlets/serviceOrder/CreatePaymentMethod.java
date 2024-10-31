@@ -14,33 +14,27 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-
-@WebServlet("/api/order/create-payment-method")
 @MultipartConfig
+@WebServlet("/api/order/create-payment-method")
 public class CreatePaymentMethod extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
+    private final ServiceOrderDao serviceOrderDao;
 
     public CreatePaymentMethod() {
         super();
+        this.serviceOrderDao = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource());
     }
 
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.getWriter().append("Served at: ").append(request.getContextPath());
-    }
-
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         try {
-            var name = request.getParameter("payment-method-name");
-
             var paymentMethod = new PaymentMethod();
-            paymentMethod.setName(name);
+            paymentMethod.setName(request.getParameter("payment-method-name"));
 
-            var dao = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource());
-
-            dao.createPaymentMethod(paymentMethod);
-            response.sendRedirect(request.getContextPath() +"/index.html");
+            serviceOrderDao.createPaymentMethod(paymentMethod);
+            response.sendRedirect(request.getContextPath() + "/index.html");
 
         } catch (CustomHttpException e) {
             response.setStatus(e.getStatusCode());
@@ -48,4 +42,5 @@ public class CreatePaymentMethod extends HttpServlet {
         }
 
     }
+
 }

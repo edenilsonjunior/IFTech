@@ -17,39 +17,36 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
-
 
 @WebServlet("/api/order/create")
 @MultipartConfig
 public class CreateServiceOrder extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
+    private final ServiceOrderDao serviceOrderDao;
 
     public CreateServiceOrder() {
         super();
+        this.serviceOrderDao = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource());
     }
 
-
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        var dao = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource());
-
-        var content = new HashMap<String, Object>();
-        content.put("paymentMethods", dao.getPaymentMethods());
-        Utils.writeJsonResponse(response, content);
+        Utils.writeJsonResponse(response, "paymentMethods", serviceOrderDao.getPaymentMethods());
     }
 
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         try {
-            var orderDao = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource());
             var customer = Utils.getCustomer(request);
             var order = createServiceOrder(request);
 
-            orderDao.create(order, customer);
-            response.sendRedirect(request.getContextPath()+"/views/order/service-order-list.html");
+            serviceOrderDao.create(order, customer);
+            response.sendRedirect(request.getContextPath() + "/views/order/service-order-list.html");
         } catch (CustomHttpException e) {
             response.setStatus(e.getStatusCode());
             Utils.writeJsonResponse(response, "error", e.getMessage());
@@ -74,4 +71,5 @@ public class CreateServiceOrder extends HttpServlet {
 
         return order;
     }
+
 }

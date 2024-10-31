@@ -12,21 +12,18 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebFilter(
-        urlPatterns =
-                {
-                    "/api/customer/logout",
-                    "/api/customer/update",
-                    "/views/customer/profile.html",
-                    "/api/order/create",
-                    "/api/order/delete",
-                    "/api/order/retrieve",
-                    "/api/order/update",
-                    "/views/order/service-order-register.html",
-                    "/views/order/service-order-edit.html",
-                    "/views/order/service-order-list.html"
-                },
-        filterName = "Authorization")
+@WebFilter(urlPatterns = {
+        "/api/customer/logout",
+        "/api/customer/update",
+        "/views/customer/profile.html",
+        "/api/order/create",
+        "/api/order/delete",
+        "/api/order/retrieve",
+        "/api/order/update",
+        "/views/order/service-order-register.html",
+        "/views/order/service-order-edit.html",
+        "/views/order/service-order-list.html"
+}, filterName = "Authorization")
 public class ValidationFilter implements Filter {
 
     @Override
@@ -35,12 +32,12 @@ public class ValidationFilter implements Filter {
 
         var httpRequest = (HttpServletRequest) request;
 
-        if(Utils.getCustomer(httpRequest) == null) {
-            var httpResponse = (HttpServletResponse)response;
-            httpResponse.sendRedirect(httpRequest.getContextPath() + "/views/customer/login.html");
-        }
-        else {
+        if (Utils.getCustomer(httpRequest) == null) {
+            var httpResponse = (HttpServletResponse) response;
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/views/error/401.html");
+        } else {
             chain.doFilter(request, response);
         }
     }
+
 }

@@ -2,6 +2,7 @@ package br.edu.ifsp.arq.tsi.arqweb2.iftech.servlets.serviceOrder;
 
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.exception.CustomHttpException;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao.ServiceOrderDao;
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.order.ServiceOrder;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.Utils;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.DataSourceSearcher;
 import jakarta.servlet.ServletException;
@@ -11,18 +12,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
-
 
 @WebServlet("/api/order/retrieve")
 public class RetrieveOrders extends HttpServlet {
+    
     private static final long serialVersionUID = 1L;
+    private final ServiceOrderDao orderDao;
 
     public RetrieveOrders() {
         super();
+        this.orderDao = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource());
     }
 
-
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -30,8 +34,9 @@ public class RetrieveOrders extends HttpServlet {
             var content = new HashMap<String, Object>();
             var customer = Utils.getCustomer(request);
 
-            var orderDao = new ServiceOrderDao(DataSourceSearcher.getInstance().getDataSource());
-            var orders = orderDao.getOrdersByCustomer(customer);
+            var orders = orderDao.getOrdersByCustomer(customer).stream()
+                    .sorted(Comparator.comparingLong(ServiceOrder::getId))
+                    .toList();
 
             content.put("orders", orders);
             Utils.writeJsonResponse(response, content);
@@ -41,4 +46,5 @@ public class RetrieveOrders extends HttpServlet {
             Utils.writeJsonResponse(response, "error", e.getMessage());
         }
     }
+
 }
