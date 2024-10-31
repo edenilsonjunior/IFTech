@@ -28,7 +28,7 @@
 
     <div class="table-responsive">
       <table class="table table-bordered table-striped table-hover" id="order-list">
-        <thead class="table-primary">
+        <thead class="table-info">
           <tr>
             <th>Codigo</th>
             <th>Descricao</th>
@@ -42,22 +42,22 @@
           </tr>
         </thead>
         <tbody id="order-list-body">
-            <tr id="order-row-template" class="d-none">
-              <td class="order-id"></td>
-              <td class="order-description"></td>
-              <td class="order-status"></td>
-              <td class="order-issueDate"></td>
-              <td class="order-endDate"></td>
-              <td class="order-price"></td>
-              <td class="order-paymentMethod"></td>
-              <td class="order-observation"></td>
-              <td>
-                <a href="#" class="btn btn-warning btn-sm edit-button">Editar</a>
-              </td>
-              <td>
-                <a class="btn btn-danger btn-sm delete-button">Excluir</a>
-              </td>
-            </tr>
+          <tr id="order-row-template" class="d-none">
+            <td class="order-id"></td>
+            <td class="order-description"></td>
+            <td class="order-status"></td>
+            <td class="order-issueDate"></td>
+            <td class="order-endDate"></td>
+            <td class="order-price"></td>
+            <td class="order-paymentMethod"></td>
+            <td class="order-observation"></td>
+            <td>
+              <a href="#" class="btn btn-warning btn-sm edit-button btn-icon-text"><i class="fas fa-edit"></i> Editar</a>
+            </td>
+            <td>
+              <a href="#" class="btn btn-danger btn-sm delete-button btn-icon-text"><i class="fas fa-trash-alt"></i> Excluir</a>
+            </td>            
+          </tr>
         </tbody>
       </table>
     </div>

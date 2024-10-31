@@ -191,7 +191,6 @@ nextStep.addEventListener('click', () => {
   passwordError.style.display = 'none';
 
   let error = false;
-  debugger;
 
   if(validateName(nameField.value) !== '') {
     nameError.innerText = validateName(nameField.value);
