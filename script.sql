@@ -62,20 +62,11 @@ CREATE TABLE service_order (
 
 -- Inserir dados na tabela customer
 INSERT INTO customer (name, cpf, email, password, phone, active) VALUES
-('João da Silva', '12345678900', 'joao@email.com', 'senha123', '(11) 91234-5678', 1),
-('Maria Oliveira', '98765432100', 'maria@email.com', 'senha456', '(11) 98765-4321', 1),
-('Carlos Santos', '45678912300', 'carlos@email.com', 'senha789', '(11) 99876-5432', 1),
-('Ana Costa', '32165498700', 'ana@email.com', 'senha321', '(11) 94567-1234', 1),
-('Fernanda Lima', '65432198700', 'fernanda@email.com', 'senha654', '(11) 93456-7890', 1);
+('João da Silva', '12345678900', 'joao@email.com', 'E7D80FFEEFA212B7C5C55700E4F7193E', '(11) 91234-5678', 1); --senha123
 
 -- Inserir dados na tabela address
 INSERT INTO address (id, street, number, complement, district, zip_code, city, state) VALUES
-(1, 'Rua das Flores', '123', 'Apto 101', 'Centro', '12345-678', 'São Paulo', 'SP'),
-(2, 'Avenida Paulista', '456', 'Sala 202', 'Bela Vista', '87654-321', 'São Paulo', 'SP'),
-(3, 'Rua do Comércio', '789', '', 'Jardins', '11223-334', 'São Paulo', 'SP'),
-(4, 'Praça da Sé', '101', 'Lado Norte', 'Sé', '99887-665', 'São Paulo', 'SP'),
-(5, 'Rua Augusta', '202', 'Casa', 'Consolação', '55443-221', 'São Paulo', 'SP');
-
+(1, 'Rua das Flores', '123', 'Apto 101', 'Centro', '12345-678', 'São Paulo', 'SP');
 
 -- Inserir dados na tabela payment_method
 INSERT INTO payment_method (name) VALUES
@@ -87,23 +78,8 @@ INSERT INTO payment_method (name) VALUES
 
 -- Inserir dados na tabela service_order
 INSERT INTO service_order (customer_id, description, status, price, issue_date, end_date, observation, payment_method_id) VALUES
-(1, 'Serviço de Limpeza', 'Concluído', 150.00, NOW(), DATE_ADD(NOW(), INTERVAL 1 DAY), 'Limpeza geral', 1),
-(2, 'Reparo de Eletrodoméstico', 'Em Andamento', 200.00, NOW(), DATE_ADD(NOW(), INTERVAL 4 DAY), 'Aguardando peça', 2),
-(3, 'Manutenção de Jardim', 'Concluído', 100.00, NOW(), DATE_ADD(NOW(), INTERVAL 2 DAY), 'Inclusão de plantas', 3),
-(4, 'Pintura de Parede', 'Agendado', 300.00, NOW(), DATE_ADD(NOW(), INTERVAL 3 DAY), 'Cor azul', 4),
-(5, 'Reforma de Cozinha', 'Concluído', 800.00, NOW() - INTERVAL 1 WEEK, NOW() - INTERVAL 2 DAY, 'Mudança de layout', 5);
-
-
-
-
-
-/*
-Customer:
-  -login
-  -register
-  -logout
-
-ServiceOrder:
-  -register
-  -getByCustomer
-*/
+(1, 'Serviço de Limpeza', 'APPROVED', 150.00, NOW(), DATE_ADD(NOW(), INTERVAL 1 DAY), 'Limpeza geral', 1),
+(1, 'Reparo de Eletrodoméstico', 'IN_PROGRESS', 200.00, NOW(), DATE_ADD(NOW(), INTERVAL 4 DAY), 'Aguardando peça', 2),
+(1, 'Manutenção de Jardim', 'APPROVED', 100.00, NOW(), DATE_ADD(NOW(), INTERVAL 2 DAY), 'Inclusão de plantas', 3),
+(1, 'Pintura de Parede', 'PENDING_APPROVAL', 300.00, NOW(), DATE_ADD(NOW(), INTERVAL 3 DAY), 'Cor azul', 4),
+(1, 'Reforma de Cozinha', 'APPROVED', 800.00, NOW() - INTERVAL 1 WEEK, NOW() - INTERVAL 2 DAY, 'Mudança de layout', 5);

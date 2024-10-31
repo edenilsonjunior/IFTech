@@ -1,11 +1,13 @@
 package br.edu.ifsp.arq.tsi.arqweb2.iftech.servlets.customer;
 
+import br.edu.ifsp.arq.tsi.arqweb2.iftech.exception.CustomHttpException;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Address;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.entity.customer.Customer;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.model.dao.CustomerDao;
 import br.edu.ifsp.arq.tsi.arqweb2.iftech.utils.*;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,62 +15,56 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-
-@WebServlet("/signup")
+@MultipartConfig
+@WebServlet("/api/customer/signup")
 public class SignupCustomer extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
+    private final CustomerDao customerDao;
 
     public SignupCustomer() {
         super();
+        this.customerDao = new CustomerDao(DataSourceSearcher.getInstance().getDataSource());
     }
 
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.getWriter().append("Served at: ").append(request.getContextPath());
+        try {
+            customerDao.create(createCustomer(request));
+            response.sendRedirect(request.getContextPath() + "/views/customer/login.html");
+
+        } catch (CustomHttpException e) {
+            response.setStatus(e.getStatusCode());
+            Utils.writeJsonResponse(response, "error", e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(500);
+            Utils.writeJsonResponse(response, "error", e.getMessage());
+        }
     }
 
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        String name = request.getParameter("name");
-        String cpf = request.getParameter("cpf");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone");
-        String password = PasswordEncoder.encode(request.getParameter("password"));
-
-        String street = request.getParameter("street");
-        String number = request.getParameter("number");
-        String complement = request.getParameter("complement");
-        String district = request.getParameter("district");
-        String zipCode = request.getParameter("zipCode");
-        String city = request.getParameter("city");
-        String state = request.getParameter("state");
+    private Customer createCustomer(HttpServletRequest request) {
 
         var customer = new Customer();
-        customer.setName(name);
-        customer.setEmail(email);
-        customer.setPhone(phone);
-        customer.setCpf(cpf);
-        customer.setPassword(password);
+        customer.setName(request.getParameter("name"));
+        customer.setEmail(request.getParameter("email"));
+        customer.setPhone(request.getParameter("phone"));
+        customer.setCpf(request.getParameter("cpf"));
+        customer.setPassword(PasswordEncoder.encode(request.getParameter("password")));
 
         var address = new Address();
-        address.setStreet(street);
-        address.setNumber(number);
-        address.setComplement(complement);
-        address.setDistrict(district);
-        address.setZipCode(zipCode);
-        address.setCity(city);
-        address.setState(state);
+        address.setStreet(request.getParameter("street"));
+        address.setNumber(request.getParameter("number"));
+        address.setComplement(request.getParameter("complement"));
+        address.setDistrict(request.getParameter("district"));
+        address.setZipCode(request.getParameter("zipCode"));
+        address.setCity(request.getParameter("city"));
+        address.setState(request.getParameter("state"));
 
         customer.setAddress(address);
 
-        var customerDao = new CustomerDao(DataSourceSearcher.getInstance().getDataSource());
-
-        if(customerDao.create(customer)) {
-            response.sendRedirect("customer-login.jsp");
-        }else {
-            request.setAttribute("result", "notRegistered");
-            request.getRequestDispatcher("customer-signup.jsp").forward(request, response);;
-        }
+        return customer;
     }
+
 }
