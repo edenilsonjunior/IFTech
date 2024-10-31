@@ -23,7 +23,7 @@ export const checkUserPermission = async () => {
 
     let response = await checkLoginStatus();
 
-    if(!response.loggedIn){
+    if (!response.loggedIn) {
         window.location.href = `${contextPath}/views/erros/401.html`;
     }
 
@@ -52,6 +52,7 @@ export const submitPost = async (event, servletUrl, formId) => {
             errorMessageElement.textContent = data.error;
             errorMessageElement.style.display = 'block';
         }
+
     } catch (error) {
         console.error('Error:', error);
     }

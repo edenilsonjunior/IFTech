@@ -2,30 +2,36 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IFTech - 404</title>
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IFNews</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" id="stylesheet" href="../../assets/css/style.css">
     <link rel="icon" type="image/x-icon" href="../../assets/images/iftech.jpg">
 </head>
 
 <body>
+
     <div id="nav-bar"></div>
 
     <main class="container">
-        <div class=" d-flex flex-column align-items-center my-5">
-            <img src="../../assets/images/404.png" alt="error" width="400px">
-            <h1 class="mt-5 text-center">Oops! Página não encontrada.</h1>
-            <h4 class="mt-2 text-center">Parece que você se perdeu. Vamos voltar ao <a href="index.html" class="text-primary">início</a>?</h4>
-            <p class="mt-2 text-center">Codigo do erro: 404</p>
+
+        <div class="d-flex flex-column align-items-center my-5">
+            <img src="../../assets/images/401.png" alt="error" width="400px">
+            <h1 class="mt-5 text-center">Acesso Negado</h1>
+            <h4 class="mt-2 text-center">Você não tem permissão para acessar esta página.
+                <span id="401-text" class="text-primary"></span>
+            </h4>
+            <p class="mt-2 text-center">Código do erro: 401</p>
         </div>
     </main>
 
     <div id="footer"></div>
+
+    <script type="module" src="assets/js/components/navbar.js"></script>
+    <script type="module" src="assets/js/components/footer.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
@@ -33,6 +39,8 @@
 
     <script src="../../assets/js/components/navbar.js" type="module"></script>
     <script src="../../assets/js/components/footer.js" type="module"></script>
+    <script type="module" src="../../assets/js/error/error401.js"></script>
+
 </body>
 
 </html>

@@ -1,49 +1,48 @@
 import { contextPath, submitGet } from '../components/global.js';
 
+
+const tableBody = document.getElementById('order-list-body');
+const templateRow = document.getElementById('order-row-template');
+
+const translated = {
+    PENDING_APPROVAL: 'Pendente de aprovação',
+    APPROVED: 'Aprovado',
+    IN_PROGRESS: 'Em andamento',
+    COMPLETED: 'Concluído',
+    CANCELED: 'Cancelado'
+};
+
+
 const loadOrders = async () => {
 
-    const tableBody = document.querySelector("#order-list tbody");
+
     tableBody.innerHTML = '';
 
-
     var data = await submitGet("/api/order/retrieve");
-
     if (data.orders.length === 0) {
-        const noDataRow = document.createElement('tr');
-        noDataRow.innerHTML = `<td colspan="5" class="text-danger text-center">Nenhuma order de serviço cadastrada</td>`;
-        tableBody.appendChild(noDataRow);
+        tableBody.innerHTML = '<tr><td colspan="10" class="text-danger text-center">Nenhuma ordem de serviço cadastrada</td></tr>';
+        return;
     }
 
+
     data.orders.forEach(order => {
-        const row = document.createElement('tr');
+        const row = templateRow.cloneNode(true);
+        row.classList.remove('d-none');
         row.id = `order-${order.id}`;
 
-        const status = {
-            PENDING_APPROVAL: 'Pendente de aprovação',
-            APPROVED: 'Aprovado',
-            IN_PROGRESS: 'Em andamento',
-            COMPLETED: 'Concluído',
-            CANCELED: 'Cancelado'
-        };
+        row.querySelector('.order-id').textContent = order.id;
+        row.querySelector('.order-description').textContent = order.description;
+        row.querySelector('.order-status').textContent = translated[order.status];
+        row.querySelector('.order-issueDate').textContent = order.issueDate;
+        row.querySelector('.order-endDate').textContent = order.endDate;
+        row.querySelector('.order-price').textContent = order.price;
+        row.querySelector('.order-paymentMethod').textContent = order.paymentMethod.name;
+        row.querySelector('.order-observation').textContent = order.observation;
 
-        order.status = status[order.status];
+        row.querySelector('.edit-button').href = `${contextPath}/views/order/service-order-edit.html?id=${order.id}`;
+        row.querySelector('.delete-button').dataset.id = order.id;
+        row.querySelector('.delete-button').addEventListener('click', () => deleteOrder(order.id));
 
-        row.innerHTML = `
-                <td scope="row">${order.id}</td>
-                <td>${order.description}</td>
-                <td>${order.status}</td>
-                <td>${order.issueDate}</td>
-                <td>${order.endDate}</td>
-                <td>${order.price}</td>
-                <td>${order.paymentMethod.name}</td>
-                <td>${order.observation}</td>
-                <td>
-                    <a href="${contextPath}/views/order/service-order-edit.html?id=${order.id}" class="btn btn-warning btn-sm">Editar</a>
-                 </td>
-                 <td>
-                    <a class="btn btn-danger btn-sm delete-button" data-id="${order.id}">Excluir</a>
-                </td>
-            `;
         tableBody.appendChild(row);
     });
 
@@ -52,8 +51,8 @@ const loadOrders = async () => {
             deleteOrder(event.target.dataset.id);
         });
     });
-    
-};
+}
+
 
 const deleteOrder = async (id) => {
     const result = await Swal.fire({
@@ -65,8 +64,6 @@ const deleteOrder = async (id) => {
     });
 
     if (result.isConfirmed) {
-        console.log("Excluir ordem de serviço com id: " + id);
-
         var data = await submitGet(`/api/order/delete?id=${id}`);
 
         if (data.success) {
@@ -74,8 +71,7 @@ const deleteOrder = async (id) => {
             successMessageElement.textContent = data.success;
             successMessageElement.style.display = 'block';
         }
-
-        if (data.error) {
+        else if (data.error) {
             document.getElementById('error-message').innerText = data.error;
             document.getElementById('error-message').style.display = 'block';
         }
@@ -84,6 +80,5 @@ const deleteOrder = async (id) => {
     }
 };
 
-
-document.getElementById("new-service-order").href = `${contextPath}/views/order/service-order-register.html`;
-document.addEventListener('DOMContentLoaded', await loadOrders());
+document.getElementById('new-service-order').href = `${contextPath}/views/order/service-order-register.html`;
+document.addEventListener('DOMContentLoaded', loadOrders);

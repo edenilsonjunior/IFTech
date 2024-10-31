@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="icon" type="image/x-icon" href="../../assets/images/iftech.jpg">
 </head>
 
 <body>
@@ -40,8 +41,23 @@
             <th colspan="2" class="text-center">Ações</th>
           </tr>
         </thead>
-        <tbody>
-          <!--Adicionado via js-->
+        <tbody id="order-list-body">
+            <tr id="order-row-template" class="d-none">
+              <td class="order-id"></td>
+              <td class="order-description"></td>
+              <td class="order-status"></td>
+              <td class="order-issueDate"></td>
+              <td class="order-endDate"></td>
+              <td class="order-price"></td>
+              <td class="order-paymentMethod"></td>
+              <td class="order-observation"></td>
+              <td>
+                <a href="#" class="btn btn-warning btn-sm edit-button">Editar</a>
+              </td>
+              <td>
+                <a class="btn btn-danger btn-sm delete-button">Excluir</a>
+              </td>
+            </tr>
         </tbody>
       </table>
     </div>

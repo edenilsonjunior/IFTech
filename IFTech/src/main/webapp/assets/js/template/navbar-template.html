@@ -1,0 +1,56 @@
+<header>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><img alt="logo" id="nav-logo" width="50px">
+                <span class="navbar-brand">IFTech</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="nav-links">
+                    <li class="nav-item">
+                        <a class="nav-link" id="main-page" aria-current="page">Página Inicial</a>
+                    </li>
+
+                    <!-- Actions for logged users -->
+                    <li class="nav-item d-none" id="orders-list-li">
+                        <a class="nav-link" id="orders-list">Ordens de serviço</a>
+                    </li>
+
+                    <li class="nav-item d-none" id="payment-method-register-li">
+                        <a class="nav-link" id="payment-method-register">Cadastrar método de pagamento</a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav me-left mb-2 mb-lg-0" id="auth-links">
+
+                    <!-- User dropdown -->
+                    <li class="nav-item dropdown d-none" id="user-dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" alt="user" width="30px">
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" id="profile">Perfil</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" id="logout">Sair</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Actions for not logged users -->
+                    <li class="nav-item d-none" id="login-register-options">
+                        <a class="btn btn-outline-secondary" role="button" id="signup">SignUp</a>
+                        <a class="btn btn-secondary" role="button" id="login">Login</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

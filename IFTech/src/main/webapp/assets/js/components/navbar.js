@@ -1,10 +1,11 @@
-import {checkLoginStatus, contextPath} from './global.js';
+import { checkLoginStatus, contextPath } from './global.js';
 
 const navbarContainer = document.getElementById('nav-bar');
 
+
 document.addEventListener('DOMContentLoaded', async () => {
 
-    const response = await fetch(`${contextPath}/assets/js/components/navbar-template.html`);
+    const response = await fetch(`${contextPath}/assets/js/template/navbar-template.html`);
     navbarContainer.innerHTML = await response.text();
 
     const data = await checkLoginStatus();
@@ -14,53 +15,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 const customizeNavbar = async (loggedIn) => {
 
     document.getElementById('nav-logo').src = `${contextPath}/assets/images/iftech.jpg`;
-    loadNavbarLinks(loggedIn);
-    loadAuthLinks(loggedIn);
+    document.getElementById('main-page').href = `${contextPath}/index.html`;
+    document.getElementById('orders-list').href = `${contextPath}/views/order/service-order-list.html`;
+    document.getElementById('payment-method-register').href = `${contextPath}/views/order/payment-method-register.html`;
+    document.getElementById('logout').href = `${contextPath}/api/customer/logout`;
+    document.getElementById('profile').href = `${contextPath}/views/customer/profile.html`;
+    document.getElementById('signup').href = `${contextPath}/views/customer/signup.html`;
+    document.getElementById('login').href = `${contextPath}/views/customer/login.html`;
+
+    if (loggedIn) {
+        document.getElementById('orders-list-li').classList.remove('d-none');
+        document.getElementById('payment-method-register-li').classList.remove('d-none');
+        document.getElementById('user-dropdown').classList.remove('d-none');
+    }
+    else {
+        document.getElementById('login-register-options').classList.remove('d-none');
+    }
+
 };
-
-const loadNavbarLinks = (loggedIn) =>{
-
-    document.getElementById('nav-links').innerHTML = 
-    `
-        <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="${contextPath}/index.html">Página Inicial</a>
-        </li>
-
-        ${loggedIn ? 
-            `
-            <li class="nav-item">
-                <a class="nav-link" href="${contextPath}/views/order/service-order-list.html">Ordens de serviço</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="${contextPath}/views/order/payment-method-register.html">Cadastrar método de pagamento</a>
-            </li>
-            ` : ''} 
-    `;
-}
-
-const loadAuthLinks = (loggedIn)  =>{
-    const authLinks = document.getElementById('auth-links');
-
-    authLinks.innerHTML = 
-    ` ${loggedIn ?
-        `
-            <li class="nav-item">
-                <a href="${contextPath}/views/customer/signup.html" class="btn btn-outline-secondary" role="button">SignUp</a>
-                <a href="${contextPath}/views/customer/login.html" class="btn btn-secondary" role="button">Login</a>
-            </li>
-        ` 
-        : 
-        `
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" alt="user" width="30px">
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="${contextPath}/views/customer/profile.html">Perfil</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="${contextPath}/api/customer/logout">Sair</a></li>
-                </ul>
-            </li>
-        ` }
-    `;
-}

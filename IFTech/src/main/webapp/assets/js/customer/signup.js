@@ -229,7 +229,6 @@ nextStep.addEventListener('click', () => {
     error = true;
   }
  
-  console.log(error);
   if (error)
     return;
 
